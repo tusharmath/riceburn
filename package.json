@@ -1,0 +1,29 @@
+{
+  "name": "riceburn",
+  "version": "5.0.0",
+  "description": "Mod that code!",
+  "main": "./lib/mod.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenotron/riceburn.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kenotron/riceburn/issues"
+  },
+  "homepage": "https://github.com/kenotron/riceburn#readme",
+  "devDependencies": {
+    "@types/glob": "^5.0.33",
+    "typescript": "^2.5.3",
+    "tslib": "^1.8.0"
+  },
+  "dependencies": {
+    "glob": "^7.1.2"
+  }
+}
