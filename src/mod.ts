@@ -5,7 +5,7 @@ import {textHandler} from './text';
 import {tsHandler, Visitor} from './typescript';
 import {ModHandlers} from './interfaces';
 
-export function mod(patternOrPromise: string | Promise<string[]>, prevPromise?: Promise<void>) {
+export default function mod(patternOrPromise: string | Promise<string[]>, prevPromise?: Promise<void>) {
     const globPromise = typeof patternOrPromise == 'string' ? 
         globAsync(patternOrPromise) : 
         patternOrPromise as Promise<string[]>;
