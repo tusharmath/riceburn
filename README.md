@@ -75,3 +75,26 @@ import mod from 'riceburn';
 })()
 
 ```
+
+## Chaining ##
+Yes you can even chain these if you need to perform multiple transforms
+
+```typescript
+import mod from 'riceburn';
+
+interface PackageJson {
+    version: string;
+}
+
+// Note this will save the file TWICE, once with the version change and once with that ISC -> MIT change
+(async() => {
+    await mod('package.json')
+        .asJson((json: PackageJson) => { // JSON can be typed
+            json.version = "1.0.0"; // Change the JSON
+            return json;    // Important: be sure to return a serializable JSON
+        })
+        .asText((text) => {
+            return text.replace('ISC', 'MIT');
+        });
+})();
+```
