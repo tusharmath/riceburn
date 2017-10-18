@@ -1,5 +1,5 @@
-import {readFileAsync, writeFileAsync} from './utils';
 import * as ts from 'typescript';
+import * as fs from 'fs';
 import * as path from 'path';
 
 function getSourceFile(file: string, content: string) {
@@ -15,7 +15,7 @@ export interface Visitor {
     (node: ts.Node): ts.Node;
 }
 
-export async function tsHandler(matches: Promise<string[]>, visitor: Visitor, spaceIndents: number = 2) {
+export async function tsHandler(matches: string[], visitor: Visitor) {
     let sourceFile: ts.SourceFile;
     let newSourceFile: ts.Node;
     let content: string;
@@ -27,15 +27,15 @@ export async function tsHandler(matches: Promise<string[]>, visitor: Visitor, sp
         target: ts.ScriptTarget.ES5
     };
 
-    (await matches).forEach(async match => {
-        content = await readFileAsync(match);
+    matches.forEach(async match => {
+        content = fs.readFileSync(match).toString();
 
         try {
             sourceFile = getSourceFile(match, content);
         } catch {
             console.error("invalid Typescript file");
         }
-    
+
         if (visitor) {
             const transformer = (context: ts.TransformationContext) => {
                 function visitNode(node: ts.Node): ts.Node {
@@ -56,7 +56,7 @@ export async function tsHandler(matches: Promise<string[]>, visitor: Visitor, sp
             transformed.dispose();
 
             if (newContent !== content) {
-                await writeFileAsync(match, newContent);
+                fs.writeFileSync(match, newContent);
             }
         }
     });

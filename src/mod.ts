@@ -1,28 +1,25 @@
 import * as ts from 'typescript';
-import {readFileAsync, writeFileAsync, globAsync} from './utils';
+import * as glob from 'glob';
 import {jsonHandler} from './json';
 import {textHandler} from './text';
 import {tsHandler, Visitor} from './typescript';
 import {ModHandlers} from './interfaces';
 
-export default function mod(patternOrPromise: string | Promise<string[]>, prevPromise?: Promise<void>) {
-    const globPromise = typeof patternOrPromise == 'string' ? 
-        globAsync(patternOrPromise) : 
-        patternOrPromise as Promise<string[]>;
-
-    if (!prevPromise) {
-        prevPromise = Promise.resolve();
-    }
+export default function mod(pattern: string) {
+    const fileList = glob.sync(pattern);
 
     const handlers: ModHandlers<any> = {
-        asJson: <T>(cb: (json: T) => T) => { 
-            return mod(globPromise, jsonHandler(globPromise, cb));
+        asJson: <T>(cb: (json: T) => T, indent?: number) => {
+            jsonHandler(fileList, cb, indent);
+            return mod(pattern);
         },
         asText: (cb: (text: string) => string) => {
-            return mod(globPromise, textHandler(globPromise, cb));
+            textHandler(fileList, cb);
+            return mod(pattern);
         },
         asTypescript: (visitor: Visitor) => {
-            return mod(globPromise, tsHandler(globPromise, visitor));
+            tsHandler(fileList, visitor);
+            return mod(pattern);
         }
     };
 
