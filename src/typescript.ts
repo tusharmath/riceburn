@@ -15,11 +15,21 @@ export interface Visitor {
     (node: ts.Node): ts.Node;
 }
 
-export async function tsHandler(matches: string[], visitor: Visitor) {
+export interface TypescriptParams {
+    newLine?: ts.NewLineKind
+}
+
+const DEFAULT_PARAMS = {
+    newLine: ts.NewLineKind.CarriageReturnLineFeed
+}
+
+export async function tsHandler(matches: string[], visitor: Visitor, params?: TypescriptParams) {
     let sourceFile: ts.SourceFile;
     let newSourceFile: ts.Node;
     let content: string;
     let newContent: string;
+
+    const _params = Object.assign(DEFAULT_PARAMS, params)
 
     const compilerOptions = {
         strict: true,
@@ -48,7 +58,7 @@ export async function tsHandler(matches: string[], visitor: Visitor) {
                 };
             };
             const transformed = ts.transform(sourceFile, [transformer], compilerOptions);
-            const printer = ts.createPrinter({ newLine: ts.NewLineKind.CarriageReturnLineFeed }, {
+            const printer = ts.createPrinter({ newLine: _params.newLine }, {
                 onEmitNode: transformed.emitNodeWithNotification,
                 substituteNode: transformed.substituteNode
             });

@@ -2,8 +2,9 @@ import * as ts from 'typescript';
 import * as glob from 'glob';
 import {jsonHandler} from './json';
 import {textHandler} from './text';
-import {tsHandler, Visitor} from './typescript';
+import {tsHandler, Visitor, TypescriptParams} from './typescript';
 import {ModHandlers} from './interfaces';
+
 
 export default function mod(pattern: string) {
     const fileList = glob.sync(pattern);
@@ -17,8 +18,8 @@ export default function mod(pattern: string) {
             textHandler(fileList, cb);
             return mod(pattern);
         },
-        asTypescript: (visitor: Visitor) => {
-            tsHandler(fileList, visitor);
+        asTypescript: (visitor: Visitor, params?: TypescriptParams) => {
+            tsHandler(fileList, visitor, params);
             return mod(pattern);
         }
     };
